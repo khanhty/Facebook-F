@@ -1,0 +1,11 @@
+{
+  "object": "page",
+  "entry": [{
+    "messaging": [{
+      "sender": {"id": "psid_1"},
+      "recipient": {"id": "page_123"},
+      "timestamp": 1730000000,
+      "message": {"mid": "m_1", "text": "Do you have size L?"}
+    }]
+  }]
+}
