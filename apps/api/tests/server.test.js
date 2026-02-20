@@ -13,6 +13,7 @@ async function withServer(run) {
   }
 }
 
+test('GET / returns API info JSON when client requests application/json', async () => {
 test('GET / returns API info JSON', async () => {
   await withServer(async (baseUrl) => {
     const res = await fetch(`${baseUrl}/`, {
@@ -34,6 +35,16 @@ test('GET / returns HTML for browser accept header', async () => {
     assert.equal(res.status, 200);
     assert.equal(res.headers.get('content-type').includes('text/html'), true);
     assert.equal(body.includes('LiveOrder F API'), true);
+  });
+});
+
+test('GET / defaults to HTML for */* requests', async () => {
+  await withServer(async (baseUrl) => {
+    const res = await fetch(`${baseUrl}/`, {
+      headers: { accept: '*/*' },
+    });
+    assert.equal(res.status, 200);
+    assert.equal(res.headers.get('content-type').includes('text/html'), true);
   });
 });
 

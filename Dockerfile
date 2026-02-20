@@ -8,4 +8,5 @@ COPY scripts ./scripts
 COPY README.md ./README.md
 RUN npm install --omit=dev
 EXPOSE 3000
+CMD ["node", "apps/api/src/server.js"]
 CMD ["npm", "run", "start"]
