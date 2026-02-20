@@ -2,9 +2,16 @@ const http = require('http');
 const { parseLiveComment } = require('./domain/comment-parser');
 const { detectIntent } = require('./ai/intent-detector');
 
+const ENDPOINTS = ['GET /', 'GET /health', 'POST /parse-comment', 'POST /detect-intent'];
+
 function json(res, code, payload) {
   res.writeHead(code, { 'Content-Type': 'application/json' });
   res.end(JSON.stringify(payload));
+}
+
+function html(res, code, body) {
+  res.writeHead(code, { 'Content-Type': 'text/html; charset=utf-8' });
+  res.end(body);
 }
 
 function readBody(req) {
@@ -26,13 +33,46 @@ function safeJsonParse(raw) {
   }
 }
 
+function renderHomePage() {
+  return `<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>LiveOrder F API</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 760px; margin: 40px auto; line-height: 1.5; padding: 0 16px; }
+    code { background: #f4f4f4; padding: 2px 6px; border-radius: 4px; }
+    li { margin-bottom: 8px; }
+  </style>
+</head>
+<body>
+  <h1>LiveOrder F API</h1>
+  <p>Status: <strong>ok</strong></p>
+  <p>Available endpoints:</p>
+  <ul>
+    <li><code>GET /health</code></li>
+    <li><code>POST /parse-comment</code></li>
+    <li><code>POST /detect-intent</code></li>
+  </ul>
+  <p>Tip: Use <code>Accept: application/json</code> on <code>GET /</code> to receive JSON metadata.</p>
+</body>
+</html>`;
+}
+
 function createServer() {
   return http.createServer(async (req, res) => {
     if (req.method === 'GET' && req.url === '/') {
+      const accept = String(req.headers.accept || '');
+      if (accept.includes('text/html')) {
+        html(res, 200, renderHomePage());
+        return;
+      }
+
       json(res, 200, {
         service: 'liveorder-f-api',
         status: 'ok',
-        endpoints: ['GET /', 'GET /health', 'POST /parse-comment', 'POST /detect-intent'],
+        endpoints: ENDPOINTS,
       });
       return;
     }

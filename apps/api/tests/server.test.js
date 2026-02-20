@@ -13,12 +13,27 @@ async function withServer(run) {
   }
 }
 
-test('GET / returns API info instead of 404', async () => {
+test('GET / returns API info JSON', async () => {
   await withServer(async (baseUrl) => {
-    const res = await fetch(`${baseUrl}/`);
+    const res = await fetch(`${baseUrl}/`, {
+      headers: { accept: 'application/json' },
+    });
     const body = await res.json();
     assert.equal(res.status, 200);
     assert.equal(body.service, 'liveorder-f-api');
+    assert.equal(Array.isArray(body.endpoints), true);
+  });
+});
+
+test('GET / returns HTML for browser accept header', async () => {
+  await withServer(async (baseUrl) => {
+    const res = await fetch(`${baseUrl}/`, {
+      headers: { accept: 'text/html' },
+    });
+    const body = await res.text();
+    assert.equal(res.status, 200);
+    assert.equal(res.headers.get('content-type').includes('text/html'), true);
+    assert.equal(body.includes('LiveOrder F API'), true);
   });
 });
 

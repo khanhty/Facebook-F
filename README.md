@@ -26,7 +26,7 @@ After boot:
 - Node test suite for unit + integration + e2e simulation.
 
 ## API endpoints (inside scaffold)
-- `GET /` (service info)
+- `GET /` (HTML in browser, JSON for API clients)
 - `GET /health`
 - `POST /parse-comment` with `{ "text": "F 12 x2" }`
 - `POST /detect-intent` with `{ "message": "Do you have size L?" }`
@@ -45,4 +45,5 @@ npm test
 See `.env.example`.
 
 ## Notes
+- Browser-friendly root page is available at `GET /` for quick visual verification.
 This is a production-oriented scaffold with core domain logic and tests. Next steps are wiring Prisma migrations, NestJS controllers/services, BullMQ workers, and full Next.js admin UI pages.
