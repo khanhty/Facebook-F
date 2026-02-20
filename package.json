@@ -1,0 +1,12 @@
+{
+  "name": "liveorder-f",
+  "version": "0.1.0",
+  "private": true,
+  "description": "LiveOrder F scaffold for FB Live + Messenger + WhatsApp social commerce automation",
+  "scripts": {
+    "test": "node --test apps/api/tests/*.test.js",
+    "lint": "node -e \"console.log('No lint configured in scaffold')\"",
+    "start": "node apps/api/src/server.js",
+    "dev": "node apps/api/src/server.js"
+  }
+}
