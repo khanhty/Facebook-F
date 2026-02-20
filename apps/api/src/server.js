@@ -13,6 +13,7 @@ function html(res, code, body) {
   res.writeHead(code, { 'Content-Type': 'text/html; charset=utf-8' });
   res.end(body);
 }
+const port = process.env.PORT || 3000;
 
 function readBody(req) {
   return new Promise((resolve, reject) => {
@@ -119,43 +120,11 @@ function createServer() {
   });
 }
 
-function startServer(port = process.env.PORT || 3000, options = {}) {
-  const {
-    onError = (msg) => console.error(msg),
-    onListening = (msg) => console.log(msg),
-    retryOnEaddrinuse = process.env.PORT_AUTO_INCREMENT === 'true',
-    exitOnError = true,
-  } = options;
-
+function startServer(port = process.env.PORT || 3000) {
   const server = createServer();
-  let fallbackAttempted = false;
-
-  server.on('error', (err) => {
-    if (err && err.code === 'EADDRINUSE' && retryOnEaddrinuse && !fallbackAttempted) {
-      fallbackAttempted = true;
-      onError(`Port ${port} is in use, retrying with an ephemeral port because PORT_AUTO_INCREMENT=true.`);
-      server.listen(0);
-      return;
-    }
-
-    const message = err && err.code === 'EADDRINUSE'
-      ? `Port ${port} is already in use. Stop the existing process/container or set a different PORT.`
-      : `Server failed to start: ${err?.message || err}`;
-
-    onError(message);
-
-    if (exitOnError) {
-      process.exit(1);
-    }
+  server.listen(port, () => {
+    console.log(`LiveOrder F API listening on :${port}`);
   });
-
-  server.on('listening', () => {
-    const address = server.address();
-    const actualPort = typeof address === 'object' && address ? address.port : port;
-    onListening(`LiveOrder F API listening on :${actualPort}`);
-  });
-
-  server.listen(port);
   return server;
 }
 
@@ -164,3 +133,35 @@ if (require.main === module) {
 }
 
 module.exports = { createServer, startServer, shouldReturnHtml };
+const server = http.createServer(async (req, res) => {
+  if (req.method === 'GET' && req.url === '/health') {
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ status: 'ok', service: 'liveorder-f-api' }));
+    return;
+  }
+
+  if (req.method === 'POST' && req.url === '/parse-comment') {
+    const body = await readBody(req);
+    const payload = JSON.parse(body || '{}');
+    const parsed = parseLiveComment(payload.text || '');
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify(parsed));
+    return;
+  }
+
+  if (req.method === 'POST' && req.url === '/detect-intent') {
+    const body = await readBody(req);
+    const payload = JSON.parse(body || '{}');
+    const intent = detectIntent(payload.message || '');
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify(intent));
+    return;
+  }
+
+  res.writeHead(404, { 'Content-Type': 'application/json' });
+  res.end(JSON.stringify({ error: 'Not Found' }));
+});
+
+server.listen(port, () => {
+  console.log(`LiveOrder F API listening on :${port}`);
+});

@@ -1,6 +1,6 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const { createServer, startServer } = require('../src/server');
+const { createServer } = require('../src/server');
 
 async function withServer(run) {
   const server = createServer();
@@ -14,6 +14,7 @@ async function withServer(run) {
 }
 
 test('GET / returns API info JSON when client requests application/json', async () => {
+test('GET / returns API info JSON', async () => {
   await withServer(async (baseUrl) => {
     const res = await fetch(`${baseUrl}/`, {
       headers: { accept: 'application/json' },
@@ -58,24 +59,4 @@ test('invalid JSON on POST /parse-comment returns 400', async () => {
     assert.equal(res.status, 400);
     assert.equal(body.error, 'Invalid JSON body');
   });
-});
-
-test('startServer reports EADDRINUSE without unhandled exception', async () => {
-  const occupied = createServer();
-  await new Promise((resolve) => occupied.listen(0, resolve));
-  const { port } = occupied.address();
-
-  const errors = [];
-  const candidate = startServer(port, {
-    exitOnError: false,
-    retryOnEaddrinuse: false,
-    onError: (msg) => errors.push(String(msg)),
-    onListening: () => {},
-  });
-
-  await new Promise((resolve) => setTimeout(resolve, 50));
-  assert.equal(errors.some((m) => m.includes('already in use')), true);
-
-  await new Promise((resolve) => occupied.close(resolve));
-  await new Promise((resolve) => candidate.close(resolve));
 });

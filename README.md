@@ -45,7 +45,6 @@ npm test
 See `.env.example`.
 
 ## Notes
-- If startup logs mention port already in use, stop old containers/processes on port `3000` or set `PORT`; optional `PORT_AUTO_INCREMENT=true` enables automatic fallback to a free port.
 - Browser-friendly root page is available at `GET /` for quick visual verification.
 - Container runs Node directly (not `npm start`) to avoid noisy npm SIGTERM shutdown errors when containers stop.
 This is a production-oriented scaffold with core domain logic and tests. Next steps are wiring Prisma migrations, NestJS controllers/services, BullMQ workers, and full Next.js admin UI pages.
