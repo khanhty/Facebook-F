@@ -1,0 +1,15 @@
+{
+  "object": "whatsapp_business_account",
+  "entry": [{
+    "changes": [{
+      "value": {
+        "messages": [{
+          "id": "wamid.1",
+          "from": "8562012345678",
+          "text": {"body": "มีไซส์ L ไหม"},
+          "type": "text"
+        }]
+      }
+    }]
+  }]
+}
