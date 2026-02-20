@@ -14,6 +14,7 @@ async function withServer(run) {
 }
 
 test('GET / returns API info JSON when client requests application/json', async () => {
+test('GET / returns API info JSON', async () => {
   await withServer(async (baseUrl) => {
     const res = await fetch(`${baseUrl}/`, {
       headers: { accept: 'application/json' },
