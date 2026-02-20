@@ -32,7 +32,7 @@ function createServer() {
       json(res, 200, {
         service: 'liveorder-f-api',
         status: 'ok',
-        endpoints: ['GET /health', 'POST /parse-comment', 'POST /detect-intent'],
+        endpoints: ['GET /', 'GET /health', 'POST /parse-comment', 'POST /detect-intent'],
       });
       return;
     }
