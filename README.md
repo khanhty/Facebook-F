@@ -25,12 +25,6 @@ After boot:
 - Sample webhook payloads for Facebook, Messenger, WhatsApp.
 - Node test suite for unit + integration + e2e simulation.
 
-
-## Merge-conflict note
-If GitHub shows conflicts on `README.md` or `apps/api/src/server.js`, keep this branch's versions for:
-- `GET /` support at `http://localhost:3000/`
-- safe JSON parsing with `400` on invalid payload
-
 ## API endpoints (inside scaffold)
 - `GET /` (service info)
 - `GET /health`
